@@ -7,6 +7,7 @@
 
 import json
 import datetime
+import tornado.web
 
 class DateEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -16,3 +17,22 @@ class DateEncoder(json.JSONEncoder):
             return obj.strftime("%Y-%m-%d")
         else:
             return json.JSONEncoder.default(self, obj)
+
+class BaseController(tornado.web.RequestHandler):
+
+    def SuccessJson(self,name,data):
+        res = {
+            'Name' : name,
+            'Code' : 200,
+            'Data' : data
+        }
+        return json.dumps(res ,cls=DateEncoder)
+
+    def ErrorJson(self,name,code,msg,data):
+        res = {
+            'Name': name,
+            'Code': code,
+            'Msg' : msg,
+            'Data': data
+        }
+        return json.dumps(res, cls=DateEncoder)

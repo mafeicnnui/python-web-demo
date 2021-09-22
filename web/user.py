@@ -5,21 +5,28 @@
 # @File : user.py.py
 # @Software: PyCharm
 
-import json
-import tornado.web
+import traceback
 from web.db import T_User
-from web.utils import DateEncoder
+from web.utils import BaseController
 from playhouse.shortcuts import model_to_dict
 
-class user(tornado.web.RequestHandler):
-    # 按姓名查询用户信息t_user表 name列
+class user(BaseController):
      def get(self):
-         xm = self.get_argument("xm")
-         rs = T_User.select().where(T_User.name.contains(xm))
-         res = []
-         for r in rs:
-             res.append(model_to_dict(r))
-         self.write(json.dumps(res ,cls=DateEncoder))
+         # 允许跨域访问
+         self.set_header("Content-Type", "application/json; charset=UTF-8")
+         self.set_header("Access-Control-Allow-Origin", '*')
+         self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+         try:
+             xm = self.get_argument("xm")
+             rs = T_User.select().where(T_User.name.contains(xm))
+             res = []
+             for r in rs:
+                 res.append(model_to_dict(r))
+             self.write(self.SuccessJson('用户查询成功',res))
+         except:
+            self.write(self.ErrorJson('用户查询失败', 500,traceback.format_exc(),None))
+
 
      def post(self):
         pass

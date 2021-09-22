@@ -30,5 +30,5 @@
 
 3.1 启动服务  
 
-    sever.py 
+    sever.py 8400
 
